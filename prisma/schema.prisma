@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model  {
+// @@map("1768831364")
+// }
+
+model acompanhante {
+  id                   Int            @id(map: "acompanhate_pkey") @default(autoincrement())
+  nome                 String         @db.VarChar(50)
+  numero_documento     String         @db.VarChar(50)
+  email                String         @db.VarChar(50)
+  telefone             String         @db.VarChar(20)
+  endereco             String         @db.VarChar(50)
+  bairro               String         @db.VarChar(50)
+  cidade               String         @db.VarChar(50)
+  estado               String         @db.VarChar(50)
+  cep                  String         @db.VarChar(10)
+  endereco_numero      String         @db.VarChar(10)
+  endereco_complemento String         @db.VarChar(50)
+  tipo_documento_id    Int
+  cliente_id           Int
+  tipo_documento       tipo_documento @relation(fields: [tipo_documento_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acompanhate_fk12")
+  cliente              cliente        @relation(fields: [cliente_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acompanhate_fk13")
+}
+
+model cargo {
+  id          Int           @id @default(autoincrement())
+  nome        String        @db.VarChar(50)
+  funcionario funcionario[]
+}
+
+model cliente {
+  id                   Int            @id @default(autoincrement())
+  nome                 String         @db.VarChar(50)
+  numero_documento     String         @db.VarChar(50)
+  email                String         @db.VarChar(50)
+  telefone             String         @db.VarChar(20)
+  endereco             String         @db.VarChar(50)
+  bairro               String         @db.VarChar(50)
+  cidade               String         @db.VarChar(50)
+  estado               String         @db.VarChar(50)
+  cep                  String         @db.VarChar(10)
+  endereco_numero      String         @db.VarChar(10)
+  endereco_complemento String         @db.VarChar(50)
+  tipo_documento_id    Int
+  acompanhante         acompanhante[]
+  tipo_documento       tipo_documento @relation(fields: [tipo_documento_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cliente_fk12")
+  reserva              reserva[]
+}
+
+model funcionario {
+  id       Int    @id @default(autoincrement())
+  nome     String @db.VarChar(50)
+  email    String @db.VarChar(50)
+  telefone String
+  cargo_id Int
+  cargo    cargo  @relation(fields: [cargo_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "funcionario_fk4")
+}
+
+model pagamento {
+  id             Int       @id @default(autoincrement())
+  valor          Float
+  tipo_pagamento String    @db.VarChar(20)
+  desconto       Float
+  status         String    @default("pendente") @db.VarChar(20)
+  reserva        reserva[]
+}
+
+model quarto {
+  id         Int       @id @default(autoincrement())
+  nome       String    @db.VarChar(50)
+  status     String    @default("vago") @db.VarChar(255)
+  capacidade Int
+  descricao  String    @db.VarChar(255)
+  reserva    reserva[]
+}
+
+model reserva {
+  id           Int       @id @default(autoincrement())
+  cliente_id   Int
+  quarto_id    Int
+  checkin      DateTime  @db.Timestamp(6)
+  checkout     DateTime  @db.Timestamp(6)
+  data         DateTime  @db.Timestamp(6)
+  pagamento_id Int
+  observacoes  String?   @db.VarChar(255)
+  cliente      cliente   @relation(fields: [cliente_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reserva_fk1")
+  quarto       quarto    @relation(fields: [quarto_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reserva_fk2")
+  pagamento    pagamento @relation(fields: [pagamento_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reserva_fk6")
+}
+
+model tipo_documento {
+  id           Int            @id @default(autoincrement())
+  nome         String         @db.VarChar(20)
+  acompanhante acompanhante[]
+  cliente      cliente[]
+}
