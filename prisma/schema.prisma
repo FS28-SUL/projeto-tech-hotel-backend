@@ -61,6 +61,7 @@ model funcionario {
   id       Int    @id @default(autoincrement())
   nome     String @db.VarChar(50)
   email    String @db.VarChar(50)
+  senha    String @db.VarChar(255)
   telefone String
   cargo_id Int
   cargo    cargo  @relation(fields: [cargo_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "funcionario_fk4")
