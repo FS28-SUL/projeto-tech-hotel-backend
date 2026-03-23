@@ -21,6 +21,16 @@
         }
       }
     },
+    "/logar": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/funcionarios/": {
       "get": {
         "description": "",
